@@ -1,20 +1,29 @@
 package app;
 
+import java.util.Scanner;
+import controller.Controller;
+
 public class Main {
+
+
     public static void main(String[] args) {
 
         //implementar biblioteca de grafos
         //métodos mínimos:
-            //adicionar um vértice ao grafo
-            //adicionar aresta ao grafo
-            //calcular árvore geradora mínima
-            //calcular caminho mínimo
+        //adicionar um vértice ao grafo
+        //adicionar aresta ao grafo
+        //calcular árvore geradora mínima
+        //calcular caminho mínimo
 
         //aplicativo
 
         //carregar arquivo txt
 
         Menu menu = new Menu();
+        Controller controller = new Controller();
+        Scanner s = new Scanner(System.in);
+
+        controller.lerArquivo();
 
         int op = -1;
 
@@ -23,28 +32,22 @@ public class Main {
             op = menu.escolha();
 
             if (op == 1) {
-                //acrescentar cidade
-                System.out.println("to implement...\n");
+                controller.acresentarCidade(s);
 
             } else if (op == 2) {
-                //acrescentar rota
-                System.out.println("to implement...\n");
+                controller.acresentarRota(s);
 
             } else if (op == 3) {
-                //calcular árvore geradora mínima (AGM)
-                System.out.println("to implement...\n");
+                controller.calcularAGM();
 
             } else if (op == 4) {
-                //calcular caminho mínimo entre duas cidades
-                System.out.println("to implement...\n");
+                controller.caminhoMinimo(s);
 
             } else if (op == 5) {
-                //calcular caminho mínimo entre duas cidades considerando apenas a AGM
-                System.out.println("to implement...\n");
+                controller.caminhoMinimoAGM(s);
 
             } else if (op == 0) {
-                //gravar e sair
-                System.out.println("to implement...\n");
+                controller.salvarArquivo();
             }
         }
     }

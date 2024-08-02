@@ -10,17 +10,17 @@ public class Menu {
     public Menu(){
 
         strMenu =
-            """
-            MENU____________________________________________________________________
-            (1) Acrescentar cidade
-            (2) Acrescentar rota
-            (3) Calcular árvore geradora mínima (AGM)
-            (4) Calcular caminho mínimo entre duas cidades
-            (5) Calcular caminho mínimo entre duas cidades considerando apenas a AGM
-            (0) Gravar e Sair
-            
-            Digite o número da opção desejada:
-            """;
+                """
+                MENU____________________________________________________________________
+                (1) Acrescentar cidade
+                (2) Acrescentar rota
+                (3) Calcular árvore geradora mínima (AGM)
+                (4) Calcular caminho mínimo entre duas cidades
+                (5) Calcular caminho mínimo entre duas cidades considerando apenas a AGM
+                (0) Gravar e Sair
+                
+                Digite o número da opção desejada:
+                """;
     }
 
     public int escolha(){
