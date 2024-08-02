@@ -1,10 +1,11 @@
 package controller;
 
+import lib.Aresta;
 import lib.Grafo;
+import lib.Vertice;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -114,6 +115,91 @@ public class Controller {
     }
 
     public void salvarArquivo(){
+        try {
+        BufferedWriter b = new BufferedWriter(new FileWriter("grafoCompleto.txt"));
+        ArrayList<Vertice<String>> vertices = grafo.getVertices();
+        int numCidades = vertices.size();
+        float[][] adj = new float[numCidades][numCidades];
+        // escreve o numero de cidades
+        b.write(numCidades + "\n");
+
+        // escreve as cidades
+        for(Vertice v : vertices) {
+            String cidade = v.toString();
+            b.write(cidade + "\n");
+        }
+
+        // escreve a matriz de adjacencias
+        for(int i = 0; i < numCidades; i++){
+            String cidade = vertices.get(i).toString();
+
+            for (int j = 0; j < numCidades; j++) {
+                String origem = grafo.getArestas().get(j).getOrigem().toString();
+                String destino = grafo.getArestas().get(j).getDestino().toString();
+
+                if(cidade.equals(origem) || cidade.equals(destino)) {
+                    adj[i][j] = grafo.getArestas().get(j).getPeso();
+                }
+            }
+        }
+
+        // escreve as adjacencias
+        for (int i = 0; i < numCidades; i++){
+            b.write("(");
+            for (int j = 0; j < numCidades; j++) {
+                b.write(String.valueOf((int) adj[i][j]));
+                if(j < adj[i].length -1) {
+                    b.write(",");
+                }
+            }
+            b.write(")\n");
+        }
+
+        b.close();
+
+        BufferedWriter bAGM = new BufferedWriter(new FileWriter("agm.txt"));
+        float[][] adjAGM = new float[numCidades][numCidades];
+
+        // escrever a quantidade de cidades
+        bAGM.write(grafoMinimo.getArestas().size() + "\n");
+
+        // escrever as cidades
+        for (Vertice v : grafoMinimo.getVertices()) {
+            bAGM.write(v.getValor() + "\n");
+        }
+
+
+        // escreve a matriz de adjacencias
+        for(int i = 0; i < numCidades; i++){
+            String cidade = vertices.get(i).toString();
+
+            for (int j = 0; j < grafoMinimo.getArestas().size(); j++) {
+                String origem = grafoMinimo.getArestas().get(j).getOrigem().toString();
+                String destino = grafoMinimo.getArestas().get(j).getDestino().toString();
+
+                if(cidade.equals(origem) || cidade.equals(destino)) {
+                    adjAGM[i][j] = grafoMinimo.getArestas().get(j).getPeso();
+                }
+            }
+        }
+
+        // escreve as adjacencias
+        for (int i = 0; i < numCidades; i++){
+            bAGM.write("(");
+            for (int j = 0; j < numCidades; j++) {
+                bAGM.write(String.valueOf((int) adjAGM[i][j]));
+                if(j < adjAGM[i].length -1) {
+                    bAGM.write(",");
+                }
+            }
+            bAGM.write(")\n");
+        }
+
+        bAGM.close();
+
+        } catch (IOException e) {
+            System.out.println("Erro na escrita do arquivo");
+        }
 
     }
 }

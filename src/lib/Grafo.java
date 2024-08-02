@@ -126,7 +126,7 @@ public class Grafo <T> {
     public void printArestas(){
         System.out.println("\nArestas do grafo:");
         for (Aresta a : this.getArestas()) {
-            System.out.println(a.getOrigem().getValor() + " --- (" +a.getPeso()+ ") ---> " + a.getDestino().getValor());
+            System.out.println(a.toString());
         }
     }
 
@@ -245,6 +245,4 @@ public class Grafo <T> {
         comp1.addAll(comp2);
         componentes.remove(comp2);
     }
-
-
 }
