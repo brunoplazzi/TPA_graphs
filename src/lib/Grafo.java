@@ -69,7 +69,7 @@ public class Grafo <T> {
 
         for (Aresta a: arestas){
             if((a.getOrigem()==verticeOrigem && a.getDestino()==verticeDestino)||(a.getOrigem()==verticeDestino && a.getDestino()==verticeOrigem && a.getPeso()==peso)){
-                //System.out.println("Já existe uma aresta com essa origem e esse destino. Nova aresta não adicionada");
+                System.out.println("Já existe uma aresta com essa origem e esse destino. Nova aresta não adicionada");
                 return;
             }
         }
@@ -85,6 +85,15 @@ public class Grafo <T> {
 
         this.arestas.add(novaAresta);
         System.out.println("Aresta |"+ origem + " --- (" +peso+ ") ---> " + destino + "| adicionada com sucesso");
+    }
+
+    public Aresta obterAresta(T origem, T destino){
+        for(Aresta a: this.arestas){
+            if((a.getOrigem().getValor().equals(origem) && a.getDestino().getValor().equals(destino))){
+                return a;
+            }
+        }
+        return null;
     }
 
     private ArrayList<Aresta> obterDestinos(Vertice<T> v){
@@ -138,6 +147,7 @@ public class Grafo <T> {
         return arestas;
     }
 
+
     public void calcularCaminhoMinimo(T origem, T destino) {
         Vertice<T> verticeOrigem = obterVertice(origem);
         Vertice<T> verticeDestino = obterVertice(destino);
@@ -147,7 +157,6 @@ public class Grafo <T> {
             return;
         }
 
-
         ArrayList<Vertice<T>> naoRotulados = new ArrayList<>(vertices);
         ArrayList<Float> distancias = new ArrayList<>(Collections.nCopies(vertices.size(), Float.MAX_VALUE));
         ArrayList<Vertice<T>> noAnterior = new ArrayList<>(Collections.nCopies(vertices.size(), null));
@@ -155,16 +164,23 @@ public class Grafo <T> {
         int origemIndex = vertices.indexOf(verticeOrigem);
         distancias.set(origemIndex, 0f);
 
-        while (naoRotulados.size() > 0) {
-            Vertice<T> atual = naoRotulados.get(0);
-            int atualIndex = 0;
+        while (!naoRotulados.isEmpty()) {
+            Vertice<T> atual = null;
+            float menorDistancia = Float.MAX_VALUE;
 
-            for (int i = 1; i < naoRotulados.size(); i++) {
-                if (distancias.get(vertices.indexOf(naoRotulados.get(i))) < distancias.get(atualIndex)) {
-                    atual = naoRotulados.get(i);
-                    atualIndex = i;
+            // Encontrar o vértice com a menor distância
+            for (Vertice<T> vertice : naoRotulados) {
+                int index = vertices.indexOf(vertice);
+                if (distancias.get(index) < menorDistancia) {
+                    menorDistancia = distancias.get(index);
+                    atual = vertice;
                 }
             }
+
+            if (atual == null || menorDistancia == Float.MAX_VALUE) {
+                break; // Não há mais vértices acessíveis
+            }
+
             naoRotulados.remove(atual);
 
             // Se o vértice atual for o destino, interrompe
@@ -176,13 +192,19 @@ public class Grafo <T> {
             ArrayList<Aresta> destinos = obterDestinos(atual);
             for (Aresta aresta : destinos) {
                 Vertice<T> vizinho = aresta.getDestino();
-                float novaDistancia = distancias.get(vertices.indexOf(atual)) + aresta.getPeso();
                 int vizinhoIndex = vertices.indexOf(vizinho);
+                float novaDistancia = distancias.get(vertices.indexOf(atual)) + aresta.getPeso();
                 if (novaDistancia < distancias.get(vizinhoIndex)) {
                     distancias.set(vizinhoIndex, novaDistancia);
                     noAnterior.set(vizinhoIndex, atual);
                 }
             }
+        }
+
+        // Verifica se foi possível chegar ao destino
+        if (distancias.get(vertices.indexOf(verticeDestino)) == Float.MAX_VALUE) {
+            System.out.println("Não há caminho possível de " + origem + " para " + destino + ".");
+            return;
         }
 
         // Imprime o caminho
@@ -203,46 +225,48 @@ public class Grafo <T> {
     public Grafo<T> calcularAGM() {
         Grafo<T> arvoreGeradoraMinima = new Grafo<>();
 
+        // Inicializar vértices na AGM
+        for (Vertice<T> vertice : vertices) {
+            arvoreGeradoraMinima.adicionarVertice(vertice.getValor());
+        }
+
         // Ordenar todas as arestas por peso
         List<Aresta> arestasOrdenadas = new ArrayList<>(arestas);
         arestasOrdenadas.sort(Comparator.comparingDouble(Aresta::getPeso));
 
         // Inicializar a estrutura de componentes
-        List<List<Vertice<T>>> componentes = new ArrayList<>();
+        Map<Vertice<T>, List<Vertice<T>>> componentes = new HashMap<>();
         for (Vertice<T> vertice : vertices) {
             List<Vertice<T>> componente = new ArrayList<>();
             componente.add(vertice);
-            componentes.add(componente);
+            componentes.put(vertice, componente);
         }
 
         // Processar as arestas
-        float somaTotalPesos = 0;
         for (Aresta aresta : arestasOrdenadas) {
-            List<Vertice<T>> compOrigem = encontrarComponente(aresta.getOrigem(), componentes);
-            List<Vertice<T>> compDestino = encontrarComponente(aresta.getDestino(), componentes);
+            Vertice<T> origem = aresta.getOrigem();
+            Vertice<T> destino = aresta.getDestino();
+
+            if (origem == null || destino == null) {
+                continue; // Ignorar arestas com vértices nulos
+            }
+
+            List<Vertice<T>> compOrigem = componentes.get(origem);
+            List<Vertice<T>> compDestino = componentes.get(destino);
 
             if (compOrigem != compDestino) {
-                arvoreGeradoraMinima.adicionarAresta((T) aresta.getOrigem().getValor(), (T) aresta.getDestino().getValor(), aresta.getPeso());
+                arvoreGeradoraMinima.adicionarAresta(origem.getValor(), destino.getValor(), aresta.getPeso());
                 unirComponentes(compOrigem, compDestino, componentes);
-                somaTotalPesos += aresta.getPeso();
             }
         }
 
         return arvoreGeradoraMinima;
     }
 
-    private List<Vertice<T>> encontrarComponente(Vertice<T> vertice, List<List<Vertice<T>>> componentes) {
-        for (List<Vertice<T>> componente : componentes) {
-            if (componente.contains(vertice)) {
-                return componente;
-            }
-        }
-        return null;
-    }
-
-    // Função para unir dois componentes
-    private void unirComponentes(List<Vertice<T>> comp1, List<Vertice<T>> comp2, List<List<Vertice<T>>> componentes) {
+    private void unirComponentes(List<Vertice<T>> comp1, List<Vertice<T>> comp2, Map<Vertice<T>, List<Vertice<T>>> componentes) {
         comp1.addAll(comp2);
-        componentes.remove(comp2);
+        for (Vertice<T> vertice : comp2) {
+            componentes.put(vertice, comp1);
+        }
     }
 }
