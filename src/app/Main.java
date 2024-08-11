@@ -47,7 +47,7 @@ public class Main {
                 controller.caminhoMinimoAGM(s);
 
             } else if (op == 0) {
-                controller.salvarArquivo();
+                controller.salvar();
             }
         }
     }

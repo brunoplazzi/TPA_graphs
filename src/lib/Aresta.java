@@ -24,6 +24,6 @@ public class Aresta{
 
     @Override
     public String toString() {
-        return this.getOrigem().getValor() + " --- (" +this.getPeso()+ ") ---> " + this.getDestino().getValor();
+        return this.getOrigem().getValor() + " --- (" +this.getPeso()+ ") --- " + this.getDestino().getValor();
     }
 }
