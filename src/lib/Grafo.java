@@ -182,14 +182,12 @@ public class Grafo<T> {
                 }
 
                 // Verifica a aresta na direção oposta para o grafo não direcionado
-                if (aresta.getOrigem() != atual) {
-                    vizinho = aresta.getOrigem();
-                    novaDistancia = distancias.get(atual) + aresta.getPeso();
-                    if (distancias.get(vizinho) > novaDistancia) {
-                        distancias.put(vizinho, novaDistancia);
-                        predecessores.put(vizinho, atual);
-                        fila.add(vizinho);
-                    }
+                vizinho = aresta.getOrigem();
+                novaDistancia = distancias.get(atual) + aresta.getPeso();
+                if (distancias.get(vizinho) > novaDistancia) {
+                    distancias.put(vizinho, novaDistancia);
+                    predecessores.put(vizinho, atual);
+                    fila.add(vizinho);
                 }
             }
         }
@@ -207,7 +205,7 @@ public class Grafo<T> {
             System.out.println("Não há caminho possível.");
         } else {
             for (Vertice<T> v : caminho) {
-                System.out.print(v.getValor() + " ");
+                System.out.print(v.getValor() + " -> ");
             }
             System.out.println("\nDistância total: " + distancias.get(verticeDestino));
         }
@@ -217,16 +215,16 @@ public class Grafo<T> {
     public Grafo<T> calcularAGM() {
         Grafo<T> arvoreGeradoraMinima = new Grafo<>();
 
-        // Inicializar vértices na AGM
+
         for (Vertice<T> vertice : vertices) {
             arvoreGeradoraMinima.adicionarVertice(vertice.getValor());
         }
 
-        // Ordenar todas as arestas por peso
+        // Ordenar por peso
         List<Aresta> arestasOrdenadas = new ArrayList<>(arestas);
         arestasOrdenadas.sort(Comparator.comparingDouble(Aresta::getPeso));
 
-        // Inicializar a estrutura de componentes
+
         Map<Vertice<T>, List<Vertice<T>>> componentes = new HashMap<>();
         for (Vertice<T> vertice : vertices) {
             List<Vertice<T>> componente = new ArrayList<>();
@@ -234,7 +232,7 @@ public class Grafo<T> {
             componentes.put(vertice, componente);
         }
 
-        // Processar as arestas
+
         for (Aresta aresta : arestasOrdenadas) {
             Vertice<T> origem = aresta.getOrigem();
             Vertice<T> destino = aresta.getDestino();

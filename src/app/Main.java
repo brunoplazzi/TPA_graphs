@@ -29,26 +29,34 @@ public class Main {
 
         while(op != 0){
 
-            op = menu.escolha();
+            try{
+                op = menu.escolha();
 
-            if (op == 1) {
-                controller.acresentarCidade(s);
+                if (op == 1) {
+                    controller.acresentarCidade(s);
 
-            } else if (op == 2) {
-                controller.acresentarRota(s);
+                } else if (op == 2) {
+                    controller.acresentarRota(s);
 
-            } else if (op == 3) {
-                controller.calcularAGM();
+                } else if (op == 3) {
+                    controller.calcularAGM();
 
-            } else if (op == 4) {
-                controller.caminhoMinimo(s);
+                } else if (op == 4) {
+                    controller.caminhoMinimo(s);
 
-            } else if (op == 5) {
-                controller.caminhoMinimoAGM(s);
+                } else if (op == 5) {
+                    controller.caminhoMinimoAGM(s);
 
-            } else if (op == 0) {
-                controller.salvar();
+                } else if (op == 0) {
+                    controller.salvar();
+                }
+
+            } catch (NumberFormatException e){
+                System.out.println("Formato invalido, tente novamente");
+                op = -1;
             }
+
+
         }
     }
 }

@@ -10,7 +10,8 @@ public class Menu {
     public Menu(){
 
         strMenu =
-                """
+                """ 
+                
                 MENU____________________________________________________________________
                 (1) Acrescentar cidade
                 (2) Acrescentar rota
